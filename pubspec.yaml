@@ -1,0 +1,13 @@
+name: events
+description: >-
+  This package will help you to create and manage events.
+  By creating event objects that fires with payload.
+
+version: 1.0.0
+repository: https://github.com/Davenchy/events
+
+environment:
+  sdk: ">=2.16.1 <3.0.0"
+
+dev_dependencies:
+  lints: ^1.0.0
