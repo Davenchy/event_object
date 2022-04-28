@@ -1,4 +1,4 @@
-import 'package:events/events.dart';
+import 'package:event_object/event_object.dart';
 
 void main() {
   // uncomment to see example in action

@@ -3,6 +3,12 @@
 This package will help you to create and manage events.
 By creating event objects that fires with payload.
 
+## Usage
+
+```dart
+import 'package:event_object/event_object.dart';
+```
+
 ## Examples
 
 ### Example 1
