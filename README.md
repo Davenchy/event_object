@@ -1,7 +1,6 @@
 # Events
 
-This package will help you to create and manage events.
-By creating event objects that fires with payload.
+This package will help you to create and manage events, by creating event objects that fires with payload.
 
 ## Usage
 
@@ -46,6 +45,30 @@ void main() {
 }
 ```
 
+results:
+
+```
+add listener 1
+fire payload 1
+event listener 1: payload 1
+
+fire payload 2
+event listener 1: payload 2
+
+add listener 2
+event listener 2: payload 1
+event listener 2: payload 2
+
+fire payload 3
+event listener 1: payload 3
+event listener 2: payload 3
+
+add listener 3
+event listener 3: payload 1
+event listener 3: payload 2
+event listener 3: payload 3
+```
+
 ### Example 2
 
 This example shows how to use __Event.convertTo__ method
@@ -73,13 +96,20 @@ void main() {
 }
 ```
 
+results:
+
+```
+event1 listener: 5, type: int
+event1 listener: 5, type: String
+```
+
 ### Example 3
 
 This example shows how to use __Event.notify__ and __Event.onNext__ methods to create notification events
 and how to delay notifications
 
 ```dart
-void example3() main {
+void main() async {
   final event = Event(); // the payload type is dynamic
 
   // because payload type is dynamic then we can use [Event.notify] method
@@ -94,16 +124,23 @@ void example3() main {
 }
 ```
 
+results:
+
+```
+waiting for notification...
+notification received // after 5 seconds
+```
+
 ### Example 4
 
 This example shows how to use __Events__ to create reactive variable
 
 ```dart
-void example4() async {
-  // set [historyLimit] to 1 to just save 1 copy of the old values
+void main() async {
+  // set [historyLimit] to 1 to just save 1 copy (the latest value)
   final name = Event<String>(name: 'name', historyLimit: 1);
 
-  // set silent to true to prevent calling listeners with the default value
+  // set silent to true to prevent calling listeners with the initial value
   name.fire('John', silent: true);
 
   // add listener to be called when the value changes
@@ -115,9 +152,18 @@ void example4() async {
 
   // set value to 'John Doe' after 5 seconds
   name.fire('John Doe', delay: Duration(seconds: 5));
-
+  
+  // ignore 1 fire call
   final newName = await name.onNext(1); // ignores 'Doe' and wait for 'John Doe'
 
   print('new name is $newName');
 }
+```
+
+results:
+
+```
+name changed to Doe
+name changed to John Doe // after 5 seconds
+new name is John Doe
 ```
