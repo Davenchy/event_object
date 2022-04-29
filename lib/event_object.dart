@@ -115,9 +115,35 @@ class Event<P> {
   /// then fires the new payload using [event]
   ListenerKiller convertTo<R>(
     Event<R> event,
-    PayloadConverter<P, R> converter,
-  ) =>
-      addListener((payload) => event.fire(converter(payload)));
+    PayloadConverter<P, R> converter, {
+    bool useHistory = true,
+    Duration? delay,
+    bool silent = false,
+  }) =>
+      addListener(
+        (payload) => event.fire(
+          converter(payload),
+          useHistory: useHistory,
+          delay: delay,
+          silent: silent,
+        ),
+      );
+
+  /// listens to another [Event] of the same type
+  ListenerKiller listenTo(
+    Event<T> event, {
+    bool useHistory = true,
+    Duration? delay,
+    bool silent = false,
+  }) =>
+      event.addListener(
+        (payload) => fire(
+          payload,
+          useHistory: useHistory,
+          delay: delay,
+          silent: silent,
+        ),
+      );
 
   /// remove [listener]
   void removeListener(EventListener<P> listener) => _listeners.remove(listener);
