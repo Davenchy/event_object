@@ -1,4 +1,4 @@
-# Events
+# EventObject
 
 This package will help you to create and manage events, by creating event objects that fires with payload.
 

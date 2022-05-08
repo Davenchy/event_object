@@ -15,3 +15,7 @@
 - Add typed listeners
 - Rename `Event.convertTo` to `Event.linkTo`
 - Create new class `EventComponent`
+
+## 1.1.1
+
+- Fix `README.md`
