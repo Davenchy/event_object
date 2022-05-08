@@ -7,6 +7,7 @@ void main() {
   // example2();
   // example3();
   // example4();
+  // example5();
 }
 
 /// Example 1
@@ -43,7 +44,7 @@ void example1() {
 
 /// Example 2
 ///
-/// This example shows how to use [Event.convertTo] method
+/// This example shows how to use [Event.linkTo] method
 ///
 /// This method is useful when you want to convert payload of a type to another type
 void example2() {
@@ -61,7 +62,7 @@ void example2() {
   });
 
   // convert payload from String to int
-  event1.convertTo<String>(event2, (payload) => payload.toString());
+  event1.linkTo<String>(event2, (payload) => payload.toString());
 
   event1.fire(5); // fire event1 with payload 5
 }
@@ -107,4 +108,68 @@ void example4() async {
   final newName = await name.onNext(1); // ignores 'Doe' and wait for 'John Doe'
 
   print('new name is $newName');
+}
+
+/// Example 5
+///
+/// This example shows how to use typed listeners and [EventComponent] object
+void example5() {
+  final session = Session();
+
+  // lets handle session events
+  session.onType<OnStartSessionEvent>((_) => print('session started'));
+
+  session.onType<OnEndSessionEvent>(
+    (_) => print('session ended'),
+  );
+
+  session.onType<OnMessageSessionEvent>(
+    (payload) => print('received message: ${payload.message}'),
+  );
+
+  // lets start the session
+  session.start();
+
+  // lets receive message
+  session.receiveMessage('hello world');
+
+  // lets end the session
+  session.end();
+}
+
+abstract class SessionEvent {
+  const SessionEvent();
+
+  const factory SessionEvent.start() = OnStartSessionEvent;
+  const factory SessionEvent.onMessage(String message) = OnMessageSessionEvent;
+  const factory SessionEvent.end() = OnEndSessionEvent;
+}
+
+class OnStartSessionEvent extends SessionEvent {
+  const OnStartSessionEvent();
+}
+
+class OnMessageSessionEvent extends SessionEvent {
+  const OnMessageSessionEvent(this.message);
+  final String message;
+}
+
+class OnEndSessionEvent extends SessionEvent {
+  const OnEndSessionEvent();
+}
+
+class Session extends EventComponent<SessionEvent> {
+  Session() : super(name: 'session_event');
+
+  void start() {
+    fire(const SessionEvent.start());
+  }
+
+  void receiveMessage(String message) {
+    fire(SessionEvent.onMessage(message));
+  }
+
+  void end() {
+    fire(const SessionEvent.end());
+  }
 }

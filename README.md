@@ -10,6 +10,12 @@ import 'package:event_object/event_object.dart';
 
 ## Examples
 
+[Example 1](#example-1): Control History using **Event.historyLimit**
+[Example 2](#example-2): How to use **Event.linkTo** method
+[Example 3](#example-3): How to use **Event.notify** and **Event.onNext**
+[Example 4](#example-4): Create reactive variables
+[Example 5](#example-5): How to use **Typed Listeners** and **EventComponent** abstract class
+
 ### Example 1
 
 This example shows how to use __Event.historyLimit__ to control history mode.
@@ -71,7 +77,7 @@ event listener 3: payload 3
 
 ### Example 2
 
-This example shows how to use __Event.convertTo__ method
+This example shows how to use __Event.linkTo__ method
 This method is useful when you want to convert payload of a type to another type
 
 ```dart
@@ -90,7 +96,7 @@ void main() {
   });
 
   // convert payload from String to int
-  event1.convertTo<String>(event2, (payload) => payload.toString());
+  event1.linkTo<String>(event2, (payload) => payload.toString());
 
   event1.fire(5); // fire event1 with payload 5
 }
@@ -166,4 +172,108 @@ results:
 name changed to Doe
 name changed to John Doe // after 5 seconds
 new name is John Doe
+```
+
+### Example 5
+
+This example will show you how to use **EventComponent** class and **typed listeners** step by step
+
+This is an example for a **fake** session object that can start, receive messages and end
+
+Lets define our abstract event type
+
+```dart
+abstract class SessionEvent {
+  const SessionEvent();
+}
+```
+
+Now lets extend  `SessionEvent` and create `start` and `end` events
+
+```dart
+class OnStartSessionEvent extends SessionEvent {
+  const OnStartSessionEvent();
+}
+
+class OnEndSessionEvent extends SessionEvent {
+  const OnEndSessionEvent();
+}
+```
+
+Lets create one more event to handle messages
+
+```dart
+class OnMessageSessionEvent extends SessionEvent {
+  const OnMessageSessionEvent(this.message);
+  final String message;
+}
+```
+
+Now lets modify our `SessionEvent` class to define some aliases for our events using the **factory** keyword
+
+```dart
+abstract class SessionEvent {
+  const SessionEvent();
+
++  const factory SessionEvent.start() = OnStartSessionEvent;
++  const factory SessionEvent.onMessage(String message) = OnMessageSessionEvent;
++  const factory SessionEvent.end() = OnEndSessionEvent;
+}
+```
+
+Cool, now lets define our session class
+
+```dart
+class Session extends EventComponent<SessionEvent> {
+  Session() : super(name: 'session_event');
+
+  void start() {
+    fire(const SessionEvent.start());
+  }
+
+  void receiveMessage(String message) {
+    fire(SessionEvent.onMessage(message));
+  }
+
+  void end() {
+    fire(const SessionEvent.end());
+  }
+}
+
+```
+
+Now lets use it
+
+```dart
+void main() {
+  final session = Session();
+
+  // lets handle session events
+  session.onType<OnStartSessionEvent>((_) => print('session started'));
+
+  session.onType<OnEndSessionEvent>(
+    (_) => print('session ended'),
+  );
+
+  session.onType<OnMessageSessionEvent>(
+    (payload) => print('received message: ${payload.message}'),
+  );
+
+  // lets start the session
+  session.start();
+
+  // lets receive message
+  session.receiveMessage('hello world');
+
+  // lets end the session
+  session.end();
+}
+```
+
+results:
+
+```text
+session started
+received message: hello world
+session ended
 ```

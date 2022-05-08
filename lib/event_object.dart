@@ -1,6 +1,9 @@
 import 'dart:async';
 
+export 'event_component.dart';
+
 typedef EventListener<P> = void Function(P payload);
+typedef ListenerFilter<P> = bool Function(P payload);
 typedef PayloadConverter<P, R> = R Function(P payload);
 typedef ListenerKiller = void Function();
 
@@ -111,9 +114,36 @@ class Event<P> {
     return () => removeListener(listener);
   }
 
+  /// the same as [addListener] but will call [listener] only if [filter] returns __true__
+  ListenerKiller addFilteredListener(
+    EventListener<P> listener,
+    ListenerFilter<P> filter, {
+    bool useHistory = true,
+  }) {
+    return addListener(
+      (payload) {
+        if (filter(payload)) listener(payload);
+      },
+      useHistory: useHistory,
+    );
+  }
+
+  /// the same as [addListener] but will call [listener] only if payload type is [T] which is a subtype of [P]
+  ListenerKiller addTypedListener<T extends P>(
+    EventListener<T> listener, {
+    bool useHistory = true,
+  }) {
+    return addListener(
+      (payload) {
+        if (payload is T) listener(payload);
+      },
+      useHistory: useHistory,
+    );
+  }
+
   /// add listener with [converter] callback to convert payload of type [P] to payload of type [R]
   /// then fires the new payload using [event]
-  ListenerKiller convertTo<R>(
+  ListenerKiller linkTo<R>(
     Event<R> event,
     PayloadConverter<P, R> converter, {
     bool useHistory = true,
@@ -131,7 +161,7 @@ class Event<P> {
 
   /// listens to another [Event] of the same type
   ListenerKiller listenTo(
-    Event<T> event, {
+    Event<P> event, {
     bool useHistory = true,
     Duration? delay,
     bool silent = false,
