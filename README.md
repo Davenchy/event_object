@@ -11,10 +11,15 @@ import 'package:event_object/event_object.dart';
 ## Examples
 
 [Example 1](#example-1): Control History using **Event.historyLimit**
+
 [Example 2](#example-2): How to use **Event.linkTo** method
+
 [Example 3](#example-3): How to use **Event.notify** and **Event.onNext**
+
 [Example 4](#example-4): Create reactive variables
+
 [Example 5](#example-5): How to use **Typed Listeners** and **EventComponent** abstract class
+
 
 ### Example 1
 
