@@ -18,7 +18,7 @@ import 'package:event_object/event_object.dart';
 
 ### Example 1
 
-This example shows how to use __Event.historyLimit__ to control history mode.
+This example shows how to use **Event.historyLimit** to control history mode.
 
 ```dart
 void main() {
@@ -53,7 +53,7 @@ void main() {
 
 results:
 
-```
+```text
 add listener 1
 fire payload 1
 event listener 1: payload 1
@@ -77,7 +77,7 @@ event listener 3: payload 3
 
 ### Example 2
 
-This example shows how to use __Event.linkTo__ method
+This example shows how to use **Event.linkTo** method
 This method is useful when you want to convert payload of a type to another type
 
 ```dart
@@ -104,14 +104,14 @@ void main() {
 
 results:
 
-```
+```text
 event1 listener: 5, type: int
 event1 listener: 5, type: String
 ```
 
 ### Example 3
 
-This example shows how to use __Event.notify__ and __Event.onNext__ methods to create notification events
+This example shows how to use **Event.notify** and **Event.onNext** methods to create notification events
 and how to delay notifications
 
 ```dart
@@ -132,14 +132,14 @@ void main() async {
 
 results:
 
-```
+```text
 waiting for notification...
 notification received // after 5 seconds
 ```
 
 ### Example 4
 
-This example shows how to use __Events__ to create reactive variable
+This example shows how to use **Events** to create reactive variable
 
 ```dart
 void main() async {
@@ -168,7 +168,7 @@ void main() async {
 
 results:
 
-```
+```text
 name changed to Doe
 name changed to John Doe // after 5 seconds
 new name is John Doe
