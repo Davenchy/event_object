@@ -155,7 +155,7 @@ class Event<P> {
         if (excludedTypes?.contains(payload.runtimeType) ?? false) return;
 
         if (useRuntimeType) {
-          if (payload.runtimeType is T) listener(payload as T);
+          if (payload.runtimeType == T) listener(payload as T);
         } else {
           if (payload is T) listener(payload);
         }

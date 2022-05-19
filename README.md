@@ -316,7 +316,17 @@ example for runtime type checking:
 ```dart
 void check<T>(Function callback) {
   addListener((event) {
-    if (event.runtimeType is T) callback(event);
+    if (event.runtimeType == T) callback(event);
   });
 }
+```
+
+Also this code will give the same result
+
+```dart
+session.onType<OnEndSessionEvent>(
+    (_) => print('session ended'),
+--- useRuntimeType: true,
++++ excludedTypes: [OnErrorEndSessionEvent],
+  );
 ```

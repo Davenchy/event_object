@@ -24,3 +24,7 @@
 
 - Add `useRuntimeType` parameter to `Event.addTypedListener`
 - Add `excludedTypes` parameter to `Event.addTypedListener`
+
+## 1.2.1
+
+- Fix `Event.addTypedListener` bug
