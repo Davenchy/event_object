@@ -7,7 +7,7 @@ void main() {
   // example2();
   // example3();
   // example4();
-  // example5();
+  example5();
 }
 
 /// Example 1
@@ -119,9 +119,16 @@ void example5() {
   // lets handle session events
   session.onType<OnStartSessionEvent>((_) => print('session started'));
 
+  // `OnErrorEndSessionEvent` is a subclass of `OnEndSessionEvent`
+  // so to only listen to `OnEndSessionEvent` set `useRuntimeType` to true
+  // by default `useRuntimeType` is false means we listen to `OnEndSessionEvent` and `OnErrorEndSessionEvent`
   session.onType<OnEndSessionEvent>(
     (_) => print('session ended'),
+    useRuntimeType: true,
   );
+
+  // lets try to fire `OnErrorEndSessionEvent`
+  session.fire(SessionEvent.errorEnd());
 
   session.onType<OnMessageSessionEvent>(
     (payload) => print('received message: ${payload.message}'),
@@ -142,6 +149,7 @@ abstract class SessionEvent {
 
   const factory SessionEvent.start() = OnStartSessionEvent;
   const factory SessionEvent.onMessage(String message) = OnMessageSessionEvent;
+  const factory SessionEvent.errorEnd() = OnErrorEndSessionEvent;
   const factory SessionEvent.end() = OnEndSessionEvent;
 }
 
@@ -156,6 +164,10 @@ class OnMessageSessionEvent extends SessionEvent {
 
 class OnEndSessionEvent extends SessionEvent {
   const OnEndSessionEvent();
+}
+
+class OnErrorEndSessionEvent extends OnEndSessionEvent {
+  const OnErrorEndSessionEvent();
 }
 
 class Session extends EventComponent<SessionEvent> {

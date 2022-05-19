@@ -115,6 +115,8 @@ class Event<P> {
   }
 
   /// the same as [addListener] but will call [listener] only if [filter] returns __true__
+  ///
+  /// check [addListener] for more info
   ListenerKiller addFilteredListener(
     EventListener<P> listener,
     ListenerFilter<P> filter, {
@@ -129,13 +131,34 @@ class Event<P> {
   }
 
   /// the same as [addListener] but will call [listener] only if payload type is [T] which is a subtype of [P]
+  ///
+  /// check [addListener] for more info
+  ///
+  /// set [useRuntimeType] to __true__ to use runtime type checking, means only listen for [T] not its parent type [P]
+  /// or any subclass of [T]
+  ///
+  /// use [excludedTypes] to exclude a [List] of [Type]
+  /// example:
+  /// if C and D are subclasses for A
+  /// then `addTypedListener<A>` while listen for A and C and D
+  /// but we want to ignore D then use `addTypedListener<A>(excludedTypes: [D])`
+  ///
+  /// to only listen for a type e.g. C then use `addTypedListener<C>(useRuntimeType: true)`
   ListenerKiller addTypedListener<T extends P>(
     EventListener<T> listener, {
     bool useHistory = true,
+    bool useRuntimeType = false,
+    List<Type>? excludedTypes,
   }) {
     return addListener(
       (payload) {
-        if (payload is T) listener(payload);
+        if (excludedTypes?.contains(payload.runtimeType) ?? false) return;
+
+        if (useRuntimeType) {
+          if (payload.runtimeType is T) listener(payload as T);
+        } else {
+          if (payload is T) listener(payload);
+        }
       },
       useHistory: useHistory,
     );

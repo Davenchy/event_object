@@ -19,3 +19,8 @@
 ## 1.1.1
 
 - Fix `README.md`
+
+## 1.2.0
+
+- Add `useRuntimeType` parameter to `Event.addTypedListener`
+- Add `excludedTypes` parameter to `Event.addTypedListener`

@@ -20,7 +20,6 @@ import 'package:event_object/event_object.dart';
 
 [Example 5](#example-5): How to use **Typed Listeners** and **EventComponent** abstract class
 
-
 ### Example 1
 
 This example shows how to use **Event.historyLimit** to control history mode.
@@ -205,6 +204,14 @@ class OnEndSessionEvent extends SessionEvent {
 }
 ```
 
+Lets add subclass for `OnEndSessionEvent`
+
+```dart
+class OnErrorEndSessionEvent extends OnEndSessionEvent {
+  const OnErrorEndSessionEvent();
+}
+```
+
 Lets create one more event to handle messages
 
 ```dart
@@ -222,6 +229,7 @@ abstract class SessionEvent {
 
 +  const factory SessionEvent.start() = OnStartSessionEvent;
 +  const factory SessionEvent.onMessage(String message) = OnMessageSessionEvent;
++  const factory SessionEvent.errorEnd() = OnErrorEndSessionEvent;
 +  const factory SessionEvent.end() = OnEndSessionEvent;
 }
 ```
@@ -256,9 +264,16 @@ void main() {
   // lets handle session events
   session.onType<OnStartSessionEvent>((_) => print('session started'));
 
+  // `OnErrorEndSessionEvent` is a subclass of `OnEndSessionEvent`
+  // so to only listen to `OnEndSessionEvent` set `useRuntimeType` to true
+  // by default `useRuntimeType` is false means we listen to `OnEndSessionEvent` and `OnErrorEndSessionEvent`
   session.onType<OnEndSessionEvent>(
     (_) => print('session ended'),
+    useRuntimeType: true,
   );
+
+  // lets try to fire `OnErrorEndSessionEvent`
+  session.fire(SessionEvent.errorEnd());
 
   session.onType<OnMessageSessionEvent>(
     (payload) => print('received message: ${payload.message}'),
@@ -281,4 +296,27 @@ results:
 session started
 received message: hello world
 session ended
+```
+
+We fired `OnEndSessionEvent` by calling `session.end()` and `OnErrorEndSessionEvent` which a subclass for `OnEndSessionEvent`
+but we got `session ended` printed only once because the listener only listens for `OnEndSessionEvent` as a runtime type
+
+example for default type checking:
+
+```dart
+void check<T>(Function callback) {
+  addListener((event) {
+    if (event is T) callback(event);
+  });
+}
+```
+
+example for runtime type checking:
+
+```dart
+void check<T>(Function callback) {
+  addListener((event) {
+    if (event.runtimeType is T) callback(event);
+  });
+}
 ```

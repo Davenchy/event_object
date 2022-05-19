@@ -62,8 +62,15 @@ abstract class EventComponent<P> {
   ListenerKiller onType<T extends P>(
     EventListener<T> listener, {
     bool useHistory = true,
+    bool useRuntimeType = false,
+    List<Type>? excludedTypes,
   }) =>
-      event.addTypedListener<T>(listener, useHistory: useHistory);
+      event.addTypedListener<T>(
+        listener,
+        useHistory: useHistory,
+        useRuntimeType: useRuntimeType,
+        excludedTypes: excludedTypes,
+      );
 
   /// Remove [listener] from the current [event]
   ///
